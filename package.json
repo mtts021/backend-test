@@ -1,0 +1,25 @@
+{
+  "name": "challege-coderockr",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest",
+    "test:staged": "vitest --watch=false --passWithNoTests",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@types/node": "^22.5.1",
+    "git-commit-msg-linter": "^5.0.8",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.9",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "*.ts": [
+    "biome check --write 'src/**'",
+    "pnpm test:staged"
+  ]
+}
