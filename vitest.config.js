@@ -1,5 +1,5 @@
-import { configDefaults } from 'vitest/config'
+import { defineConfig } from 'vitest/config'
 
-export default configDefaults({
+export default defineConfig({
   test: {}
 })
