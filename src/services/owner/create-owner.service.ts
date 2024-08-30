@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
-import type { Owner } from './owner'
-import type { OwnerRepository } from './owner.repository'
+import type { Owner } from '../../entities/owner'
+import type { OwnerRepository } from '../../repositories/owner.repository'
 
 interface createOwnerRequest {
   name: string
@@ -17,6 +17,8 @@ export class CreateOwnerService {
     }
 
     const owner: Owner = { ...request, uuid: randomUUID(), createdAt: new Date() }
+
+    await this.ownerRepository.save(owner)
 
     return owner
   }
