@@ -12,7 +12,9 @@ export interface createInvestmentRequest {
 export class CreateInvestmentService {
   constructor(private readonly investmentRepository: InvestmentRepository) {}
   async execute(request: createInvestmentRequest): Promise<Investment | Error> {
-    if (request.initialAmount <= 0) new Error('initial amount cannot be negative')
+    if (request.initialAmount <= 0) {
+      return new Error('initial amount cannot be negative')
+    }
     if (request.title.length <= 2 || request.title.length > 255) {
       return new Error('title must be less than 2 and less than 255')
     }
