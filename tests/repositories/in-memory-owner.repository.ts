@@ -1,5 +1,5 @@
 import type { Owner } from '../../src/entities/owner'
-import type { OwnerRepository } from '../../src/owner.repository'
+import type { OwnerRepository } from '../../src/repositories/owner.repository'
 
 export class InMemoryOwnerRepository implements OwnerRepository {
   public owners: Owner[] = []
