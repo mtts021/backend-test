@@ -14,7 +14,7 @@ export class InMemoryInvestmentRepository implements InvestmentRepository {
     }
     return investment
   }
-  async findAllInvestment(): Promise<Investment[]> {
-    throw new Error('Method not implemented.')
+  async findAllInvestment(ownerUUID: string): Promise<Investment[]> {
+    return this.investments.filter((investment) => investment.ownerUUID === ownerUUID)
   }
 }

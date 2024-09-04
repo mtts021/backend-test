@@ -9,4 +9,14 @@ export class InMemoryOwnerRepository implements OwnerRepository {
   async existOwner(email: string): Promise<boolean> {
     return !!this.owners.find((owner) => owner.email === email)
   }
+
+  async findOwnerByUUID(ownerUUID: string): Promise<Owner | null> {
+    const owner = this.owners.find((owner) => owner.uuid === ownerUUID)
+
+    if (!owner) {
+      return null
+    }
+
+    return owner
+  }
 }
