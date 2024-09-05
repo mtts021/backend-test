@@ -14,7 +14,14 @@ export class InMemoryInvestmentRepository implements InvestmentRepository {
     }
     return investment
   }
-  async findAllInvestment(ownerUUID: string): Promise<Investment[]> {
-    return this.investments.filter((investment) => investment.ownerUUID === ownerUUID)
+  async findAllInvestment(
+    ownerUUID: string,
+    limit: number,
+    skip: number,
+  ): Promise<Investment[]> {
+    const investments = this.investments.filter(
+      (investment) => investment.ownerUUID === ownerUUID,
+    )
+    return investments.slice(skip, skip + limit)
   }
 }
