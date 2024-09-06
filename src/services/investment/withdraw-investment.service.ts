@@ -1,5 +1,9 @@
 import dayjs from 'dayjs'
 import type { InvestmentRepository } from '../../repositories/investment.repository'
+import {
+  calculateBalanceGain,
+  calculateFinalBalance,
+} from './helpers/calculate-gain.helper'
 
 export class WithdrawInvestmentService {
   constructor(
@@ -16,25 +20,23 @@ export class WithdrawInvestmentService {
     if (investment.status === 'WITHDRAWN') {
       return new Error('investment already withdrawn')
     }
-
     const yearInvestment = investment.createdAt.getUTCFullYear()
-    let finalBalance: number
-    let taxa: number
     const createdAtFromDayjs = dayjs(investment.createdAt)
     const differenceMonth = Math.abs(createdAtFromDayjs.diff(this.date, 'month'))
     const differenceYear = this.date.getUTCFullYear() - yearInvestment
-    const balanceGain =
-      investment.initialAmount * (1 + 0.0052) ** differenceMonth -
-      investment.initialAmount
+
+    const balanceGain = calculateBalanceGain(investment.initialAmount, differenceMonth)
+    let finalBalance: number
+    let taxa: number
     if (differenceYear < 1) {
-      taxa = balanceGain * 0.225
-      finalBalance = investment.initialAmount + balanceGain - taxa
+      taxa = investment.initialAmount * 0.225
+      finalBalance = calculateFinalBalance(investment.initialAmount, balanceGain, taxa)
     } else if (differenceYear >= 1 && differenceYear <= 2) {
-      taxa = balanceGain * 0.185
-      finalBalance = investment.initialAmount + balanceGain - taxa
+      taxa = investment.initialAmount * 0.185
+      finalBalance = calculateFinalBalance(investment.initialAmount, balanceGain, taxa)
     } else {
-      taxa = balanceGain * 0.15
-      finalBalance = investment.initialAmount + balanceGain - taxa
+      taxa = investment.initialAmount * 0.15
+      finalBalance = calculateFinalBalance(investment.initialAmount, balanceGain, taxa)
     }
 
     investment.withdrawnAt = this.date
