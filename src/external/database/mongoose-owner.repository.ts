@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto'
-import { makeConnection } from '.'
 import type { Owner } from '../../entities/owner'
 import type { OwnerRepository } from '../../repositories/owner.repository'
 import { ownerModel } from './owner'
@@ -8,15 +6,25 @@ export class MongooseOwnerRepository implements OwnerRepository {
   async save(owner: Owner): Promise<void> {
     ownerModel.create({ ...owner, created_at: owner.createdAt })
   }
-  findOwnerByUUID(ownerUUID: string): Promise<Owner | null> {
-    throw new Error('Method not implemented.')
+  async findOwnerByUUID(ownerUUID: string): Promise<Owner | null> {
+    const output = await ownerModel.findOne({ uuid: ownerUUID }).lean()
+    if (!output) {
+      return null
+    }
+    const { _id, ...owner } = output
+
+    return owner
   }
-  findOwnerByEmail(email: string): Promise<Owner | null> {
-    throw new Error('Method not implemented.')
+  async findOwnerByEmail(email: string): Promise<Owner | null> {
+    const output = await ownerModel.findOne({ email }).lean()
+    if (!output) {
+      return null
+    }
+    const { _id, ...owner } = output
+
+    return owner
   }
-  existOwner(email: string): Promise<boolean> {
-    throw new Error('Method not implemented.')
+  async existOwner(email: string): Promise<boolean> {
+    return !!(await ownerModel.findOne({ email }).lean())
   }
 }
-
-const ownerRepository = new MongooseOwnerRepository()

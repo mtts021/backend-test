@@ -1,13 +1,14 @@
 import { Schema, model } from 'mongoose'
+import type { Owner } from '../../entities/owner'
 
-export const ownerModel = model(
+export const ownerModel = model<Owner>(
   'Owner',
   new Schema({
     uuid: String,
     name: String,
     email: String,
     password: String,
-    created_at: Date,
-    updated_at: Date,
+    createdAt: Date,
+    updatedAt: Date,
   }),
 )
