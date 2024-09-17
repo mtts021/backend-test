@@ -16,6 +16,7 @@ export class App {
     this.server.get('/status', () => {
       return 'Hello World'
     })
+    this.server.register(ownerRoute)
   }
 
   plugins() {
