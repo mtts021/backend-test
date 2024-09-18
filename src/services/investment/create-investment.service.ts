@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { Investment } from '../../entities/investment'
 import type { InvestmentRepository } from '../../repositories/investment.repository'
+import type { OwnerRepository } from '../../repositories/owner.repository'
 
 export interface createInvestmentRequest {
   title: string
@@ -10,8 +11,15 @@ export interface createInvestmentRequest {
 }
 
 export class CreateInvestmentService {
-  constructor(private readonly investmentRepository: InvestmentRepository) {}
+  constructor(
+    private readonly investmentRepository: InvestmentRepository,
+    private readonly ownerRepository: OwnerRepository,
+  ) {}
   async execute(request: createInvestmentRequest): Promise<Investment | Error> {
+    const ownerOrNull = await this.ownerRepository.findOwnerByUUID(request.ownerUUID)
+    if (!ownerOrNull) {
+      return new Error('owner not found')
+    }
     if (request.initialAmount <= 0) {
       return new Error('initial amount cannot be negative')
     }
