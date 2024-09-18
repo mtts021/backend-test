@@ -1,9 +1,10 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import z, { string } from 'zod'
+import z from 'zod'
 import { CreateInvestmentService } from '../../../services/investment/create-investment.service'
 import { GetAllInvestmentService } from '../../../services/investment/get-all-investment.service'
 import { GetInvestmentService } from '../../../services/investment/get-investment.service'
+import { WithdrawInvestmentService } from '../../../services/investment/withdraw-investment.service'
 import { MongooseInvestmentRepository } from '../../database/mongoose-investment.repository'
 import { MongooseOwnerRepository } from '../../database/mongoose-owner.repository'
 
@@ -18,6 +19,11 @@ const getInvestmentService = new GetInvestmentService(investmentRepository)
 const getAllInvestmentService = new GetAllInvestmentService(
   ownerRepository,
   investmentRepository,
+)
+
+const withdrawInvestmentService = new WithdrawInvestmentService(
+  investmentRepository,
+  new Date(),
 )
 
 export async function investmentRoute(fastify: FastifyInstance) {
@@ -89,6 +95,31 @@ export async function investmentRoute(fastify: FastifyInstance) {
       const { ownerUUID } = req.params
       const { skip } = req.query
       const response = await getAllInvestmentService.execute(ownerUUID, skip)
+      if (response instanceof Error) {
+        return reply.send(422).send({
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: response.message,
+          },
+        })
+      }
+
+      reply.status(200).send(response)
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    '/investment/withdraw/:uuid',
+    {
+      schema: {
+        params: z.object({
+          uuid: z.string().uuid(),
+        }),
+      },
+    },
+    async (req, reply) => {
+      const { uuid } = req.params
+      const response = await withdrawInvestmentService.execute(uuid)
       if (response instanceof Error) {
         return reply.send(422).send({
           error: {
