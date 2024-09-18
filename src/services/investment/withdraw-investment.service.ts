@@ -29,13 +29,13 @@ export class WithdrawInvestmentService {
     let finalBalance: number
     let taxa: number
     if (differenceYear < 1) {
-      taxa = investment.initialAmount * 0.225
+      taxa = balanceGain * 0.225
       finalBalance = calculateFinalBalance(investment.initialAmount, balanceGain, taxa)
     } else if (differenceYear >= 1 && differenceYear <= 2) {
-      taxa = investment.initialAmount * 0.185
+      taxa = balanceGain * 0.185
       finalBalance = calculateFinalBalance(investment.initialAmount, balanceGain, taxa)
     } else {
-      taxa = investment.initialAmount * 0.15
+      taxa = balanceGain * 0.15
       finalBalance = calculateFinalBalance(investment.initialAmount, balanceGain, taxa)
     }
 
