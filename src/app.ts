@@ -32,7 +32,7 @@ export class App {
     this.server.setErrorHandler(
       (error: FastifyError, req: FastifyRequest, res: FastifyReply) => {
         if (error instanceof ZodError) {
-          res.status(400).send({
+          return res.status(400).send({
             error: {
               code: 'INVALID_INPUT',
               details: error.flatten().fieldErrors,

@@ -1,7 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import z from 'zod'
+import z, { string } from 'zod'
 import { CreateInvestmentService } from '../../../services/investment/create-investment.service'
+import { GetAllInvestmentService } from '../../../services/investment/get-all-investment.service'
 import { GetInvestmentService } from '../../../services/investment/get-investment.service'
 import { MongooseInvestmentRepository } from '../../database/mongoose-investment.repository'
 import { MongooseOwnerRepository } from '../../database/mongoose-owner.repository'
@@ -14,6 +15,10 @@ const createInvestmentService = new CreateInvestmentService(
 )
 
 const getInvestmentService = new GetInvestmentService(investmentRepository)
+const getAllInvestmentService = new GetAllInvestmentService(
+  ownerRepository,
+  investmentRepository,
+)
 
 export async function investmentRoute(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().post(
@@ -43,7 +48,7 @@ export async function investmentRoute(fastify: FastifyInstance) {
   )
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    '/investment/:uuid',
+    '/investment/expect-balance/:uuid',
     {
       schema: {
         params: z.object({
@@ -55,6 +60,35 @@ export async function investmentRoute(fastify: FastifyInstance) {
       const { uuid } = req.params
 
       const response = await getInvestmentService.execute(uuid)
+      if (response instanceof Error) {
+        return reply.send(422).send({
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: response.message,
+          },
+        })
+      }
+
+      reply.status(200).send(response)
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    '/investment/:ownerUUID',
+    {
+      schema: {
+        params: z.object({
+          ownerUUID: z.string().uuid(),
+        }),
+        querystring: z.object({
+          skip: z.number().positive().optional(),
+        }),
+      },
+    },
+    async (req, reply) => {
+      const { ownerUUID } = req.params
+      const { skip } = req.query
+      const response = await getAllInvestmentService.execute(ownerUUID, skip)
       if (response instanceof Error) {
         return reply.send(422).send({
           error: {
