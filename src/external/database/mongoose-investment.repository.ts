@@ -1,6 +1,9 @@
 import type { FlattenMaps, Types } from 'mongoose'
 import type { Investment } from '../../entities/investment'
-import type { InvestmentRepository } from '../../repositories/investment.repository'
+import type {
+  InvestmentRepository,
+  updateInvestmentType,
+} from '../../repositories/investment.repository'
 import { InvestmentModel } from './investment.model'
 
 export class MongooseInvestmentRepository implements InvestmentRepository {
@@ -38,6 +41,10 @@ export class MongooseInvestmentRepository implements InvestmentRepository {
       .lean()
 
     return output.map(toDomain)
+  }
+
+  async update(uuid: string, data: updateInvestmentType): Promise<void> {
+    await InvestmentModel.updateOne({ uuid }, { $set: data })
   }
 }
 

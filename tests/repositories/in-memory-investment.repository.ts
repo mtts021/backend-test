@@ -1,5 +1,9 @@
 import type { Investment } from '../../src/entities/investment'
-import type { InvestmentRepository } from '../../src/repositories/investment.repository'
+import { InvestmentModel } from '../../src/external/database/investment.model'
+import type {
+  InvestmentRepository,
+  updateInvestmentType,
+} from '../../src/repositories/investment.repository'
 
 export class InMemoryInvestmentRepository implements InvestmentRepository {
   public investments: Investment[] = []
@@ -23,5 +27,12 @@ export class InMemoryInvestmentRepository implements InvestmentRepository {
       (investment) => investment.ownerUUID === ownerUUID,
     )
     return investments.slice(skip, skip + limit)
+  }
+  async update(uuid: string, data: updateInvestmentType): Promise<void> {
+    const investment = this.investments.find((investment) => investment.uuid === uuid)
+    if (investment) {
+      const index = this.investments.indexOf(investment)
+      this.investments[index] = { ...investment, ...data }
+    }
   }
 }
