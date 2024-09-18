@@ -5,6 +5,7 @@ import fastify, {
 } from 'fastify'
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'
 import { ZodError } from 'zod'
+import { investmentRoute } from './external/http/routes/investment.route'
 import { ownerRoute } from './external/http/routes/owner.route'
 
 export class App {
@@ -22,6 +23,7 @@ export class App {
       return 'Hello World'
     })
     this.server.register(ownerRoute)
+    this.server.register(investmentRoute)
   }
 
   plugins() {
