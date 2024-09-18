@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { CreateInvestmentService } from '../../../services/investment/create-investment.service'
+import { GetInvestmentService } from '../../../services/investment/get-investment.service'
 import { MongooseInvestmentRepository } from '../../database/mongoose-investment.repository'
 import { MongooseOwnerRepository } from '../../database/mongoose-owner.repository'
 
@@ -11,6 +12,8 @@ const createInvestmentService = new CreateInvestmentService(
   investmentRepository,
   ownerRepository,
 )
+
+const getInvestmentService = new GetInvestmentService(investmentRepository)
 
 export async function investmentRoute(fastify: FastifyInstance) {
   fastify.withTypeProvider<ZodTypeProvider>().post(
@@ -36,6 +39,32 @@ export async function investmentRoute(fastify: FastifyInstance) {
         })
       }
       reply.status(200).send({ uuid: investment.uuid })
+    },
+  )
+
+  fastify.withTypeProvider<ZodTypeProvider>().get(
+    '/investment/:uuid',
+    {
+      schema: {
+        params: z.object({
+          uuid: z.string().uuid(),
+        }),
+      },
+    },
+    async (req, reply) => {
+      const { uuid } = req.params
+
+      const response = await getInvestmentService.execute(uuid)
+      if (response instanceof Error) {
+        return reply.send(422).send({
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: response.message,
+          },
+        })
+      }
+
+      reply.status(200).send(response)
     },
   )
 }
