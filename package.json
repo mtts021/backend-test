@@ -16,6 +16,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
     "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.5.1",
     "git-commit-msg-linter": "^5.0.8",
     "husky": "^9.1.5",
@@ -27,8 +28,10 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
     "fastify-type-provider-zod": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.6.2",
     "zod": "^3.23.8"
   }
