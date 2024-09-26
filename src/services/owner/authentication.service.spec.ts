@@ -9,6 +9,9 @@ describe('Authentication Service', () => {
     createToken: async (payload: payloadData): Promise<string> => {
       return `fake-token-${payload.uuid}`
     },
+    verifyToken: (token: string): Promise<payloadData | Error> => {
+      throw new Error('Function not implemented.')
+    },
   }
   it('should return access token when match credentials', async () => {
     const encryptPassword = new TestExternalEncryptProvider()

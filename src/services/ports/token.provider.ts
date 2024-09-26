@@ -4,4 +4,5 @@ export interface payloadData {
 
 export interface TokenProvider {
   createToken(payload: payloadData): Promise<string>
+  verifyToken(token: string): Promise<payloadData | Error>
 }
