@@ -35,13 +35,18 @@ export async function investmentRoute(fastify: FastifyInstance) {
       schema: {
         body: z.object({
           title: z.string().max(255),
-          ownerUUID: z.string().uuid(),
           initialAmount: z.number().min(1),
         }),
       },
     },
     async (req, reply) => {
-      const investment = await createInvestmentService.execute(req.body)
+      const { title, initialAmount } = req.body
+      const ownerUUID = req.owner?.uuid as string
+      const investment = await createInvestmentService.execute({
+        title,
+        ownerUUID,
+        initialAmount,
+      })
 
       if (investment instanceof Error) {
         return reply.status(422).send({
@@ -82,19 +87,16 @@ export async function investmentRoute(fastify: FastifyInstance) {
   )
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    '/investment/:ownerUUID',
+    '/investment/',
     {
       schema: {
-        params: z.object({
-          ownerUUID: z.string().uuid(),
-        }),
         querystring: z.object({
           skip: z.number().positive().optional(),
         }),
       },
     },
     async (req, reply) => {
-      const { ownerUUID } = req.params
+      const ownerUUID = req.owner?.uuid as string
       const { skip } = req.query
       const response = await getAllInvestmentService.execute(ownerUUID, skip)
       if (response instanceof Error) {
