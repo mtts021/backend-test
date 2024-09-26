@@ -7,6 +7,7 @@ import { GetInvestmentService } from '../../../services/investment/get-investmen
 import { WithdrawInvestmentService } from '../../../services/investment/withdraw-investment.service'
 import { MongooseInvestmentRepository } from '../../database/mongoose-investment.repository'
 import { MongooseOwnerRepository } from '../../database/mongoose-owner.repository'
+import { authorizationMiddleware } from '../middleware/authorization.middleware'
 
 const investmentRepository = new MongooseInvestmentRepository()
 const ownerRepository = new MongooseOwnerRepository()
@@ -27,6 +28,7 @@ const withdrawInvestmentService = new WithdrawInvestmentService(
 )
 
 export async function investmentRoute(fastify: FastifyInstance) {
+  fastify.addHook('preHandler', authorizationMiddleware)
   fastify.withTypeProvider<ZodTypeProvider>().post(
     '/investment',
     {
