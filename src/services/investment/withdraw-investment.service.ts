@@ -10,9 +10,11 @@ export class WithdrawInvestmentService {
     private readonly investmentRepository: InvestmentRepository,
     private readonly date: Date,
   ) {}
-  async execute(investmentUUID: string) {
-    const investment =
-      await this.investmentRepository.findInvestmentByUUID(investmentUUID)
+  async execute(ownerUUID: string, investmentUUID: string) {
+    const investment = await this.investmentRepository.findInvestmentByUUID(
+      ownerUUID,
+      investmentUUID,
+    )
 
     if (!investment) {
       return new Error('investment not found')
@@ -43,7 +45,7 @@ export class WithdrawInvestmentService {
     investment.status = 'WITHDRAWN'
     investment.updatedAt = this.date
 
-    this.investmentRepository.update(investment.uuid, {
+    this.investmentRepository.update(ownerUUID, investment.uuid, {
       status: investment.status,
       withdrawnAt: investment.withdrawnAt,
       updatedAt: investment.updatedAt,

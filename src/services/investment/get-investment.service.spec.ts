@@ -8,7 +8,7 @@ describe('Get investment service', () => {
 
     const getInvestmentService = new GetInvestmentService(investmentRepository)
 
-    const output = await getInvestmentService.execute('fake-uuid')
+    const output = await getInvestmentService.execute('fake-owner-uuid', 'fake-uuid')
 
     expect(output).toBeInstanceOf(Error)
   })
@@ -28,6 +28,7 @@ describe('Get investment service', () => {
     const getInvestmentService = new GetInvestmentService(investmentRepository)
 
     const output = await getInvestmentService.execute(
+      'c8c3h8hc33hc893hv3rv4tv89',
       '46da0c49-2e62-496d-9240-fd34ffa119b5',
     )
 
@@ -50,6 +51,7 @@ describe('Get investment service', () => {
     const getInvestmentService = new GetInvestmentService(investmentRepository)
 
     const output = await getInvestmentService.execute(
+      'c8c3h8hc33hc893hv3rv4tv89',
       '46da0c49-2e62-496d-9240-fd34ffa119b5',
     )
 

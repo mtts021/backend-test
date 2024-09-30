@@ -6,7 +6,7 @@ export type updateInvestmentType = Partial<
 
 export interface InvestmentRepository {
   save(investment: Investment): Promise<void>
-  findInvestmentByUUID(uuid: string): Promise<Investment | null>
+  findInvestmentByUUID(ownerUUID: string, uuid: string): Promise<Investment | null>
   findAllInvestment(ownerUUID: string, limit: number, skip: number): Promise<Investment[]>
-  update(uuid: string, data: updateInvestmentType): Promise<void>
+  update(ownerUUID: string, uuid: string, data: updateInvestmentType): Promise<void>
 }

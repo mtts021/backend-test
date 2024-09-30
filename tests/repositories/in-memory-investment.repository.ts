@@ -11,8 +11,13 @@ export class InMemoryInvestmentRepository implements InvestmentRepository {
   async save(investment: Investment): Promise<void> {
     this.investments.push(investment)
   }
-  async findInvestmentByUUID(uuid: string): Promise<Investment | null> {
-    const investment = this.investments.find((investment) => investment.uuid === uuid)
+  async findInvestmentByUUID(
+    ownerUUID: string,
+    uuid: string,
+  ): Promise<Investment | null> {
+    const investment = this.investments.find((investment) => {
+      return investment.uuid === uuid && investment.ownerUUID === ownerUUID
+    })
     if (!investment) {
       return null
     }
@@ -28,8 +33,14 @@ export class InMemoryInvestmentRepository implements InvestmentRepository {
     )
     return investments.slice(skip, skip + limit)
   }
-  async update(uuid: string, data: updateInvestmentType): Promise<void> {
-    const investment = this.investments.find((investment) => investment.uuid === uuid)
+  async update(
+    ownerUUID: string,
+    uuid: string,
+    data: updateInvestmentType,
+  ): Promise<void> {
+    const investment = this.investments.find((investment) => {
+      return investment.uuid === uuid && investment.ownerUUID === ownerUUID
+    })
     if (investment) {
       const index = this.investments.indexOf(investment)
       this.investments[index] = { ...investment, ...data }

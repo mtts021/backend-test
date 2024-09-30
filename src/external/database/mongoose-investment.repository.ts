@@ -15,9 +15,12 @@ export class MongooseInvestmentRepository implements InvestmentRepository {
       throw new Error('Internal Server Error')
     }
   }
-  async findInvestmentByUUID(uuid: string): Promise<Investment | null> {
+  async findInvestmentByUUID(
+    ownerUUID: string,
+    uuid: string,
+  ): Promise<Investment | null> {
     try {
-      const output = await InvestmentModel.findOne({ uuid }).lean()
+      const output = await InvestmentModel.findOne({ uuid, ownerUUID }).lean()
       if (!output) {
         return null
       }
@@ -43,8 +46,12 @@ export class MongooseInvestmentRepository implements InvestmentRepository {
     return output.map(toDomain)
   }
 
-  async update(uuid: string, data: updateInvestmentType): Promise<void> {
-    await InvestmentModel.updateOne({ uuid }, { $set: data })
+  async update(
+    ownerUUID: string,
+    uuid: string,
+    data: updateInvestmentType,
+  ): Promise<void> {
+    await InvestmentModel.updateOne({ uuid, ownerUUID }, { $set: data })
   }
 }
 

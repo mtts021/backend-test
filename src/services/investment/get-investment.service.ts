@@ -4,9 +4,11 @@ import { calculateExpectedBalance } from './helpers/calculate-gain.helper'
 
 export class GetInvestmentService {
   constructor(private readonly investmentRepository: InvestmentRepository) {}
-  async execute(investmentUUID: string) {
-    const investment =
-      await this.investmentRepository.findInvestmentByUUID(investmentUUID)
+  async execute(ownerUUID: string, investmentUUID: string) {
+    const investment = await this.investmentRepository.findInvestmentByUUID(
+      ownerUUID,
+      investmentUUID,
+    )
     if (!investment) {
       return new Error('Investment not found')
     }

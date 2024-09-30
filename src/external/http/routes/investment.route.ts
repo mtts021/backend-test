@@ -71,8 +71,9 @@ export async function investmentRoute(fastify: FastifyInstance) {
     },
     async (req, reply) => {
       const { uuid } = req.params
+      const ownerUUID = req.owner?.uuid as string
 
-      const response = await getInvestmentService.execute(uuid)
+      const response = await getInvestmentService.execute(ownerUUID, uuid)
       if (response instanceof Error) {
         return reply.send(422).send({
           error: {
@@ -123,7 +124,8 @@ export async function investmentRoute(fastify: FastifyInstance) {
     },
     async (req, reply) => {
       const { uuid } = req.params
-      const response = await withdrawInvestmentService.execute(uuid)
+      const ownerUUID = req.owner?.uuid as string
+      const response = await withdrawInvestmentService.execute(ownerUUID, uuid)
       if (response instanceof Error) {
         return reply.send(422).send({
           error: {

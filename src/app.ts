@@ -5,7 +5,6 @@ import fastify, {
 } from 'fastify'
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'
 import { ZodError } from 'zod'
-import { authorizationMiddleware } from './external/http/middleware/authorization.middleware'
 import { investmentRoute } from './external/http/routes/investment.route'
 import { ownerRoute } from './external/http/routes/owner.route'
 

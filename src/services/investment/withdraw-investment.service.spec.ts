@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { InMemoryInvestmentRepository } from '../../../tests/repositories/in-memory-investment.repository'
 import { WithdrawInvestmentService } from './withdraw-investment.service'
 
@@ -19,6 +19,7 @@ describe('Withdraw investment service', () => {
     )
 
     const output = await withdrawInvestmentService.execute(
+      'c8c3h8hc33hc893hv3rv4tv89',
       '46da0c49-2e62-496d-9240-fd34ffa119b5',
     )
     expect(output).toBeTruthy()
@@ -31,6 +32,7 @@ describe('Withdraw investment service', () => {
     )
 
     const output = await withdrawInvestmentService.execute(
+      'c8c3h8hc33hc893hv3rv4tv89',
       '46da0c49-2e62-496d-9240-fd34ffa119b5',
     )
     expect(output).toBeInstanceOf(Error)
@@ -52,6 +54,7 @@ describe('Withdraw investment service', () => {
     )
 
     const output = await withdrawInvestmentService.execute(
+      'c8c3h8hc33hc893hv3rv4tv89',
       '46da0c49-2e62-496d-9240-fd34ffa119b5',
     )
     expect(output).toBeInstanceOf(Error)
