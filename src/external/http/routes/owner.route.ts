@@ -3,6 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { Authentication } from '../../../services/owner/authentication.service'
 import { CreateOwnerService } from '../../../services/owner/create-owner.service'
+import { ApiError } from '../../../utils/api-error'
 import { MongooseOwnerRepository } from '../../database/mongoose-owner.repository'
 import { BcryptEncryptProvider } from '../../lib/bcrypt-encrypt.provider'
 import { JwtTokenProvider } from '../../lib/jwt.provider'
@@ -35,8 +36,8 @@ export async function ownerRoute(fastify: FastifyInstance) {
 
       const { name, email } = req.body
       const owner = await createOwnerService.execute({ name, email, password })
-      if (owner instanceof Error) {
-        return reply.status(422).send({
+      if (owner instanceof ApiError) {
+        return reply.status(owner.statusCode).send({
           error: { code: 'VALIDATION_ERROR', message: owner.message },
         })
       }
@@ -67,9 +68,9 @@ export async function ownerRoute(fastify: FastifyInstance) {
       )
 
       const accessToken = await authenticationService.execute(email, password)
-      if (accessToken instanceof Error) {
+      if (accessToken instanceof ApiError) {
         return reply
-          .status(422)
+          .status(accessToken.statusCode)
           .send({ error: { code: 'VALIDATION_ERROR', message: accessToken.message } })
       }
       return reply.status(200).send(accessToken)

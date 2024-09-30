@@ -5,6 +5,7 @@ import { CreateInvestmentService } from '../../../services/investment/create-inv
 import { GetAllInvestmentService } from '../../../services/investment/get-all-investment.service'
 import { GetInvestmentService } from '../../../services/investment/get-investment.service'
 import { WithdrawInvestmentService } from '../../../services/investment/withdraw-investment.service'
+import { ApiError } from '../../../utils/api-error'
 import { MongooseInvestmentRepository } from '../../database/mongoose-investment.repository'
 import { MongooseOwnerRepository } from '../../database/mongoose-owner.repository'
 import { authorizationMiddleware } from '../middleware/authorization.middleware'
@@ -48,8 +49,8 @@ export async function investmentRoute(fastify: FastifyInstance) {
         initialAmount,
       })
 
-      if (investment instanceof Error) {
-        return reply.status(422).send({
+      if (investment instanceof ApiError) {
+        return reply.status(investment.statusCode).send({
           error: {
             code: 'VALIDATION_ERROR',
             message: investment.message,
@@ -75,7 +76,7 @@ export async function investmentRoute(fastify: FastifyInstance) {
 
       const response = await getInvestmentService.execute(ownerUUID, uuid)
       if (response instanceof Error) {
-        return reply.send(422).send({
+        return reply.send(response.statusCode).send({
           error: {
             code: 'VALIDATION_ERROR',
             message: response.message,
@@ -100,8 +101,8 @@ export async function investmentRoute(fastify: FastifyInstance) {
       const ownerUUID = req.owner?.uuid as string
       const { skip } = req.query
       const response = await getAllInvestmentService.execute(ownerUUID, skip)
-      if (response instanceof Error) {
-        return reply.send(422).send({
+      if (response instanceof ApiError) {
+        return reply.send(response.statusCode).send({
           error: {
             code: 'VALIDATION_ERROR',
             message: response.message,
@@ -126,8 +127,8 @@ export async function investmentRoute(fastify: FastifyInstance) {
       const { uuid } = req.params
       const ownerUUID = req.owner?.uuid as string
       const response = await withdrawInvestmentService.execute(ownerUUID, uuid)
-      if (response instanceof Error) {
-        return reply.send(422).send({
+      if (response instanceof ApiError) {
+        return reply.send(response.statusCode).send({
           error: {
             code: 'VALIDATION_ERROR',
             message: response.message,

@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { Owner } from '../../entities/owner'
 import type { OwnerRepository } from '../../repositories/owner.repository'
+import { type ApiError, UnprocessableEntityError } from '../../utils/api-error'
 import type { EncryptProvider } from '../ports/encrypt.provider'
 
 interface createOwnerRequest {
@@ -15,9 +16,9 @@ export class CreateOwnerService {
     private readonly encryptProvider: EncryptProvider,
   ) {}
 
-  async execute(request: createOwnerRequest): Promise<Error | Owner> {
+  async execute(request: createOwnerRequest): Promise<ApiError | Owner> {
     if (await this.ownerRepository.existOwner(request.email)) {
-      return new Error('Owner already exist')
+      return new UnprocessableEntityError('Owner already exist')
     }
 
     const passwordHash = await this.encryptProvider.encryptPassword(request.password)

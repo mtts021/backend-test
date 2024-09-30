@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import type { InvestmentRepository } from '../../repositories/investment.repository'
+import { NotFoundError } from '../../utils/api-error'
 import { calculateExpectedBalance } from './helpers/calculate-gain.helper'
 
 export class GetInvestmentService {
@@ -10,7 +11,7 @@ export class GetInvestmentService {
       investmentUUID,
     )
     if (!investment) {
-      return new Error('Investment not found')
+      return new NotFoundError('Investment not found')
     }
 
     const createdAtFromDayjs = dayjs(investment.createdAt)

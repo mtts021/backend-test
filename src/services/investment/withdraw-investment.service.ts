@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import type { InvestmentRepository } from '../../repositories/investment.repository'
+import { NotFoundError, UnprocessableEntityError } from '../../utils/api-error'
 import {
   calculateBalanceGain,
   calculateFinalBalance,
@@ -17,10 +18,10 @@ export class WithdrawInvestmentService {
     )
 
     if (!investment) {
-      return new Error('investment not found')
+      return new NotFoundError('investment not found')
     }
     if (investment.status === 'WITHDRAWN') {
-      return new Error('investment already withdrawn')
+      return new UnprocessableEntityError('investment already withdrawn')
     }
     const yearInvestment = investment.createdAt.getUTCFullYear()
     const createdAtFromDayjs = dayjs(investment.createdAt)
