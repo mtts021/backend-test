@@ -13,7 +13,8 @@ export class App {
     logger: true,
   })
 
-  constructor() {
+  constructor(opt = {}) {
+    this.server = fastify(opt)
     this.routes()
     this.plugins()
   }
