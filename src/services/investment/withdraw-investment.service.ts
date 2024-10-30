@@ -46,7 +46,7 @@ export class WithdrawInvestmentService {
     investment.status = 'WITHDRAWN'
     investment.updatedAt = this.date
 
-    this.investmentRepository.update(ownerUUID, investment.uuid, {
+    await this.investmentRepository.update(ownerUUID, investment.uuid, {
       status: investment.status,
       withdrawnAt: investment.withdrawnAt,
       updatedAt: investment.updatedAt,

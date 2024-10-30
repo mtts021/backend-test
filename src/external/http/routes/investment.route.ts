@@ -62,7 +62,7 @@ export async function investmentRoute(fastify: FastifyInstance) {
   )
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    '/investment/expect-balance/:uuid',
+    '/investment/expected-balance/:uuid',
     {
       schema: {
         params: z.object({
@@ -76,7 +76,7 @@ export async function investmentRoute(fastify: FastifyInstance) {
 
       const response = await getInvestmentService.execute(ownerUUID, uuid)
       if (response instanceof Error) {
-        return reply.send(response.statusCode).send({
+        return reply.status(response.statusCode).send({
           error: {
             code: 'VALIDATION_ERROR',
             message: response.message,
@@ -89,7 +89,7 @@ export async function investmentRoute(fastify: FastifyInstance) {
   )
 
   fastify.withTypeProvider<ZodTypeProvider>().get(
-    '/investment/',
+    '/investment',
     {
       schema: {
         querystring: z.object({
