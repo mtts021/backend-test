@@ -38,7 +38,6 @@ export class MongooseInvestmentRepository implements InvestmentRepository {
     skip: number,
   ): Promise<Investment[]> {
     const output = await InvestmentModel.find({ ownerUUID })
-      .sort('-cratedAt')
       .skip(skip)
       .limit(limit)
       .lean()
