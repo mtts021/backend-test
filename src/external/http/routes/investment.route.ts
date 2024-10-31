@@ -37,16 +37,18 @@ export async function investmentRoute(fastify: FastifyInstance) {
         body: z.object({
           title: z.string().max(255),
           initialAmount: z.number().min(1),
+          createdAt: z.coerce.date().optional(),
         }),
       },
     },
     async (req, reply) => {
-      const { title, initialAmount } = req.body
+      const { title, initialAmount, createdAt } = req.body
       const ownerUUID = req.owner?.uuid as string
       const investment = await createInvestmentService.execute({
         title,
         ownerUUID,
         initialAmount,
+        createdAt,
       })
 
       if (investment instanceof ApiError) {
@@ -93,7 +95,7 @@ export async function investmentRoute(fastify: FastifyInstance) {
     {
       schema: {
         querystring: z.object({
-          skip: z.number().positive().optional(),
+          skip: z.coerce.number().positive().optional(),
         }),
       },
     },
