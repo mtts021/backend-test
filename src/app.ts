@@ -1,3 +1,6 @@
+import { resolve } from 'node:path'
+import swagger from '@fastify/swagger'
+import swaggerUI from '@fastify/swagger-ui'
 import fastify, {
   type FastifyError,
   type FastifyRequest,
@@ -44,5 +47,17 @@ export class App {
         res.status(500).send({ message: 'Internal server error' })
       },
     )
+
+    this.server.register(swagger, {
+      mode: 'static',
+      specification: {
+        path: './docs/docs.json',
+        postProcessor: (swaggerObject) => swaggerObject,
+        baseDir: resolve(),
+      },
+    })
+    this.server.register(swaggerUI, {
+      routePrefix: '/docs',
+    })
   }
 }
