@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "management investment- API",
-      "description": "API for account management",
+      "title": "Investments- API",
+      "description": "API for investments management",
       "version": "0.1.0"
     },
     "servers": [
@@ -160,6 +160,315 @@
             }
           }
         }
+      },
+      "/investment": {
+        "post": {
+          "summary": "Create a new investment",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "tags": ["Investment"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "maxLength": 255
+                    },
+                    "initialAmount": {
+                      "type": "number",
+                      "minimum": 1
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "initialAmount"
+                  ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "create investment successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "uuid": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/BadRequest"
+            },
+            "422": {
+                "description": "Unprocessable Entity",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "examples": {
+                      "generalError":{
+                           "$ref": "#/components/examples/generalError"
+                      }
+                    }
+                  }
+                }
+            },
+            "404":{
+              "$ref": "#/components/responses/NotFound"
+            }
+          }
+        }
+      },
+      "/investment/expected-balance/{uuid}": {
+        "get": {
+          "summary": "Get expected balance investment",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "tags": ["Investment"],
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/uuid"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "create investment successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "investment": {
+                        "$ref": "#/components/schemas/Investment"
+                      },
+                      "expectedBalance/balanceGain": {
+                        "type": "string",
+                        "format": "number"
+                      }
+                    }
+                  },
+                  "examples": {
+                    "expectedBalance": {
+                      "value": {
+                        "investment": {
+                          "title": "Investment 1",
+                          "initialAmount": 1200,
+                          "status": "ACTIVE",
+                          "createdAt": "2022-09-03"
+                        },
+                        "expectedBalance": "1399"
+                      }
+                  },
+                    "balanceGain": {
+                      "value": {
+                        "investment": {
+                          "title": "Investment 1",
+                          "initialAmount": 1200,
+                          "status": "ACTIVE",
+                          "createdAt": "2022-09-03"
+                        },
+                        "balanceGain": 199
+                      }
+                  }
+                  }
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/BadRequest"
+            },
+            "422": {
+                "description": "Unprocessable Entity",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "examples": {
+                      "generalError":{
+                           "$ref": "#/components/examples/generalError"
+                      }
+                    }
+                  }
+                }
+            },
+            "404":{
+              "$ref": "#/components/responses/NotFound"
+            }
+          }
+        }
+      },
+      "/investment/": {
+        "get": {
+          "summary": "Get investments from owner",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/page"
+            }
+          ],
+          "tags": ["Investment"],
+          "responses": {
+            "200": {
+              "description": "get investments successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref":  "#/components/schemas/Investment"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/investment/withdraw/{uuid}": {
+        "get": {
+          "summary": "withdraw an investment form owner",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "tags": ["Investment"],
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/uuid"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "withdraw investment successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                        "investment": {
+                          "$ref": "#/components/schemas/Investment"
+                        },
+                        "balanceGain": {
+                          "type": "number"                        },
+                        "taxa": {
+                          "type": "number"                        },
+                        "finalBalance": {
+                          "type": "number"
+                        }
+                    }
+                  },
+                  "examples": {
+                    "investment with less than 1 year" :{
+                      "description": "withdraw at: 2024/10/04",
+                      "value": {
+                        "investment": {
+                          "title": "Investment 1",
+                          "initialAmount": 1200,
+                          "status": "WITHDRAW",
+                          "createdAt": "2023-11-04"
+                        },
+                        "balanceGain": 70.4527,
+                        "taxa": 15.8518,
+                        "finalBalance": 54.600
+                      }
+                    },
+                    "investments between 1 and 2 years" :{
+                      "description": "withdraw at: 2024/05/04",
+                      "value": {
+                        "investment": {
+                          "title": "Investment 1",
+                          "initialAmount": 1200,
+                          "status": "WITHDRAW",
+                          "createdAt": "2022-11-04"
+                        },
+                        "balanceGain": 117.4249,
+                        "taxa": 21.7236,
+                        "finalBalance": 95.7013
+                      }
+                    },
+                    "investments over 2 years" :{
+                      "description": "withdraw at: 2024/12/04",
+                      "value": {
+                        "investment": {
+                          "title": "Investment 1",
+                          "initialAmount": 1200,
+                          "status": "WITHDRAW",
+                          "createdAt": "2022-11-04"
+                        },
+                        "balanceGain": 166.1338,
+                        "taxa": 24.92,
+                        "finalBalance": 141.2138
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Unprocessable Entity",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "examples": {
+                    "InvestmentAlreadyWithdraw":{
+                         "value": {
+                          "message": "investment already withdraw"
+                         }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "$ref": "#/components/responses/NotFound"
+            }
+          }
+        }
       }
     },
     "components": {
@@ -228,15 +537,14 @@
                 }
               },
               "examples": {
-                "generalError": {
+                "OwnerNotFound": {
                   "value": {
-                    "message": "string"
+                    "message": "Owner not found"
                   }
                 },
-                "NotFoundPasswordResetToken": {
-                  "description": "password reset token could not be found",
+                "InvestmentNotFound": {
                   "value": {
-                    "message": "Password reset token not found"
+                    "message": "Investment not found"
                   }
                 }
               }
@@ -264,6 +572,58 @@
           "value": {
             "message": "Invalid email or password"
           }
+        }
+      },
+      "schemas": {
+        "Investment":{
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "initialAmount": {
+              "type": "number",
+              "minimum": 1,
+              "example": 1200
+            },
+            "status": {
+              "type": "string",
+              "enum": ["ACTIVE", "WITHDRAW"]
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
+      "parameters": {
+        "uuid": {
+          "name": "uuid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "uuid do investment"
+        },
+        "page": {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1
+        },
+        "description": "page number for pagination"
         }
       }
     }

@@ -95,14 +95,14 @@ export async function investmentRoute(fastify: FastifyInstance) {
     {
       schema: {
         querystring: z.object({
-          skip: z.coerce.number().positive().optional(),
+          page: z.coerce.number().positive().optional(),
         }),
       },
     },
     async (req, reply) => {
       const ownerUUID = req.owner?.uuid as string
-      const { skip } = req.query
-      const response = await getAllInvestmentService.execute(ownerUUID, skip)
+      const { page } = req.query
+      const response = await getAllInvestmentService.execute(ownerUUID, page)
       if (response instanceof ApiError) {
         return reply.send(response.statusCode).send({
           error: {
