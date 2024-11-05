@@ -32,6 +32,10 @@ export class CreateInvestmentService {
       return new UnprocessableEntityError('title must be less than 2 and less than 255')
     }
 
+    if (request.createdAt && request.createdAt > new Date()) {
+      return new UnprocessableEntityError('Created cannot be in the future')
+    }
+
     const investment: Investment = {
       ...request,
       uuid: randomUUID(),
