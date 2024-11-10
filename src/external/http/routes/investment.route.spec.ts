@@ -4,10 +4,11 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { App } from '../../../app'
 import { clearDatabaseInvestment, clearDatabaseOwner } from '../../../utils/mongoose'
 import { makeConnection } from '../../database'
+import 'dotenv/config'
 
 describe('/investment', async () => {
   const app = new App()
-  await makeConnection()
+  await makeConnection(process.env.CONNECTION_STRING_MONGO_TMPFS)
 
   let accessToken: string
 

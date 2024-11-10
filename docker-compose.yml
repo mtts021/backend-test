@@ -1,18 +1,25 @@
 services:
-  mongo: 
-    image: mongo
+  app: 
+    build: .
     ports:
-      - 27017:27017
+      - 3000:3000
+    volumes:
+      - .:/usr/app
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
 
   mongo_tmpfs:
     image: mongo
-    ports:
-      - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
     tmpfs:
       - /data/db

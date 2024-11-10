@@ -2,13 +2,13 @@
   "name": "challege-coderockr",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
   "main": "index.js",
   "scripts": {
+    "build": "rimraf ./dist & tsc -b",
     "dev": "tsx watch ./src/server.ts",
     "test": "vitest --exclude './src/external/http/routes'",
     "test:integration": "vitest --dir='./src/external/http/routes'",
-    "test:staged": "vitest --watch=false --passWithNoTests",
+    "test:staged": "vitest --exclude './src/external/http/routes' --watch=false --passWithNoTests",
     "prepare": "husky"
   },
   "keywords": [],
@@ -39,6 +39,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb-memory-server": "^10.1.2",
     "mongoose": "^8.6.2",
+    "rimraf": "^6.0.1",
     "zod": "^3.23.8"
   }
 }

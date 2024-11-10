@@ -3,9 +3,10 @@ import { afterAll, describe, expect, it } from 'vitest'
 import { App } from '../../../app'
 import { clearDatabaseOwner } from '../../../utils/mongoose'
 import { makeConnection } from '../../database'
+import 'dotenv/config'
 
 const app = new App()
-makeConnection().then(() => {
+makeConnection(process.env.CONNECTION_STRING_MONGO_TMPFS).then(() => {
   return
 })
 
