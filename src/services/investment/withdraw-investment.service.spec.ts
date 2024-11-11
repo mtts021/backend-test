@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { InMemoryInvestmentRepository } from '../../../tests/repositories/in-memory-investment.repository'
 import { WithdrawInvestmentService } from './withdraw-investment.service'
 
@@ -10,26 +10,23 @@ describe('Withdraw investment service', () => {
       title: 'Title fake',
       ownerUUID: 'c8c3h8hc33hc893hv3rv4tv89',
       initialAmount: 1000,
-      createdAt: new Date('2024-01-01'),
+      createdAt: new Date('2022-11-10'),
       status: 'ACTIVE',
     })
-    const withdrawInvestmentService = new WithdrawInvestmentService(
-      investmentRepository,
-      new Date('2024-09-01'),
-    )
+    const withdrawInvestmentService = new WithdrawInvestmentService(investmentRepository)
 
     const output = await withdrawInvestmentService.execute(
       'c8c3h8hc33hc893hv3rv4tv89',
       '46da0c49-2e62-496d-9240-fd34ffa119b5',
     )
     expect(output).toBeTruthy()
+    expect(output).toHaveProperty('balanceGain')
+    expect(output).toHaveProperty('taxa')
+    expect(output).toHaveProperty('finalBalance')
   })
   it('should return error investment not found', async () => {
     const investmentRepository = new InMemoryInvestmentRepository()
-    const withdrawInvestmentService = new WithdrawInvestmentService(
-      investmentRepository,
-      new Date('2024-09-01'),
-    )
+    const withdrawInvestmentService = new WithdrawInvestmentService(investmentRepository)
 
     const output = await withdrawInvestmentService.execute(
       'c8c3h8hc33hc893hv3rv4tv89',
@@ -48,10 +45,7 @@ describe('Withdraw investment service', () => {
       createdAt: new Date('2024-01-01'),
       status: 'WITHDRAWN',
     })
-    const withdrawInvestmentService = new WithdrawInvestmentService(
-      investmentRepository,
-      new Date('2024-09-01'),
-    )
+    const withdrawInvestmentService = new WithdrawInvestmentService(investmentRepository)
 
     const output = await withdrawInvestmentService.execute(
       'c8c3h8hc33hc893hv3rv4tv89',

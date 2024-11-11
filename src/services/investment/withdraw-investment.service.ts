@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import { differenceInMonths, differenceInYears } from 'date-fns'
 import type { InvestmentRepository } from '../../repositories/investment.repository'
 import { NotFoundError, UnprocessableEntityError } from '../../utils/api-error'
 import {
@@ -7,10 +7,7 @@ import {
 } from './helpers/calculate-gain.helper'
 
 export class WithdrawInvestmentService {
-  constructor(
-    private readonly investmentRepository: InvestmentRepository,
-    private readonly date: Date,
-  ) {}
+  constructor(private readonly investmentRepository: InvestmentRepository) {}
   async execute(ownerUUID: string, investmentUUID: string) {
     const investment = await this.investmentRepository.findInvestmentByUUID(
       ownerUUID,
@@ -23,10 +20,11 @@ export class WithdrawInvestmentService {
     if (investment.status === 'WITHDRAWN') {
       return new UnprocessableEntityError('investment already withdrawn')
     }
-    const yearInvestment = investment.createdAt.getUTCFullYear()
-    const createdAtFromDayjs = dayjs(investment.createdAt)
-    const differenceMonth = Math.abs(createdAtFromDayjs.diff(this.date, 'month'))
-    const differenceYear = this.date.getUTCFullYear() - yearInvestment
+
+    const dateToday = new Date()
+    const differenceMonth = differenceInMonths(dateToday, investment.createdAt) - 1
+
+    const differenceYear = differenceInYears(dateToday, investment.createdAt)
 
     const balanceGain = calculateBalanceGain(investment.initialAmount, differenceMonth)
     let finalBalance: number
@@ -42,9 +40,9 @@ export class WithdrawInvestmentService {
       finalBalance = calculateFinalBalance(investment.initialAmount, balanceGain, taxa)
     }
 
-    investment.withdrawnAt = this.date
+    investment.withdrawnAt = dateToday
+    investment.updatedAt = dateToday
     investment.status = 'WITHDRAWN'
-    investment.updatedAt = this.date
 
     await this.investmentRepository.update(ownerUUID, investment.uuid, {
       status: investment.status,

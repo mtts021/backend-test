@@ -23,10 +23,7 @@ const getAllInvestmentService = new GetAllInvestmentService(
   investmentRepository,
 )
 
-const withdrawInvestmentService = new WithdrawInvestmentService(
-  investmentRepository,
-  new Date(),
-)
+const withdrawInvestmentService = new WithdrawInvestmentService(investmentRepository)
 
 export async function investmentRoute(fastify: FastifyInstance) {
   fastify.addHook('preHandler', authorizationMiddleware)
