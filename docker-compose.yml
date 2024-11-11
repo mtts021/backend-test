@@ -6,7 +6,7 @@ services:
     volumes:
       - .:/usr/app
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=docker
     depends_on:
       - mongo
 
