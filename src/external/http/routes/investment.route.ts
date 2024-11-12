@@ -101,7 +101,7 @@ export async function investmentRoute(fastify: FastifyInstance) {
       const { page } = req.query
       const response = await getAllInvestmentService.execute(ownerUUID, page)
       if (response instanceof ApiError) {
-        return reply.send(response.statusCode).send({
+        return reply.status(response.statusCode).send({
           error: {
             code: 'VALIDATION_ERROR',
             message: response.message,
@@ -120,14 +120,22 @@ export async function investmentRoute(fastify: FastifyInstance) {
         params: z.object({
           uuid: z.string().uuid(),
         }),
+        querystring: z.object({
+          withdrawAt: z.coerce.date().optional(),
+        }),
       },
     },
     async (req, reply) => {
       const { uuid } = req.params
+      const { withdrawAt } = req.query
       const ownerUUID = req.owner?.uuid as string
-      const response = await withdrawInvestmentService.execute(ownerUUID, uuid)
+      const response = await withdrawInvestmentService.execute(
+        ownerUUID,
+        uuid,
+        withdrawAt,
+      )
       if (response instanceof ApiError) {
-        return reply.send(response.statusCode).send({
+        return reply.status(response.statusCode).send({
           error: {
             code: 'VALIDATION_ERROR',
             message: response.message,

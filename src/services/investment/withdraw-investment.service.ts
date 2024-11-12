@@ -8,7 +8,11 @@ import {
 
 export class WithdrawInvestmentService {
   constructor(private readonly investmentRepository: InvestmentRepository) {}
-  async execute(ownerUUID: string, investmentUUID: string) {
+  async execute(ownerUUID: string, investmentUUID: string, withdrawAt?: Date) {
+    if (withdrawAt && withdrawAt > new Date()) {
+      return new UnprocessableEntityError("withdrawAt can't be in the future")
+    }
+
     const investment = await this.investmentRepository.findInvestmentByUUID(
       ownerUUID,
       investmentUUID,
@@ -21,8 +25,8 @@ export class WithdrawInvestmentService {
       return new UnprocessableEntityError('investment already withdrawn')
     }
 
-    const dateToday = new Date()
-    const differenceMonth = differenceInMonths(dateToday, investment.createdAt) - 1
+    const dateToday = withdrawAt ?? new Date()
+    const differenceMonth = differenceInMonths(dateToday, investment.createdAt)
 
     const differenceYear = differenceInYears(dateToday, investment.createdAt)
 
