@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./dist & tsc -b",
+    "start": "node ./dist/server.js",
     "dev": "tsx watch ./src/server.ts",
     "test": "vitest --exclude './src/external/http/routes'",
     "test:integration": "vitest --dir='./src/external/http/routes'",
